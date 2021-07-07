@@ -1,0 +1,70 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <h1>{{title}}</h1>
+  <div class="row">
+    <h2>A</h2>
+    <p>.#####.#.....##.....#########.....##.....##.....#</p>
+  </div>
+  <div class="row">
+    <h2>B</h2>
+    <p>######.#.....##.....#######.#.....##.....#######.</p>
+  </div>
+  <div class="row">
+    <h2>C</h2>
+    <p>########......#......#......#......#......#######</p>
+  </div>
+  <div class="row">
+    <h2>A with error</h2>
+    <p>.#####.#.....##.....####.####.....##.....##.....#</p>
+  </div>
+  <form novalidate>
+    <div class="mb-3">
+      <label for="ascii_code" class="form-label">ASCII code</label>
+      <input type="text" class="form-control" id="ascii_code">
+    </div>
+    <div style="display: none" id="result" class="form-text">We'll never share your email with anyone else.</div>
+    <input id="submit-btn" type="submit" value="submit" class="btn btn-primary"/><img style="display: none" id="loading" width="50px" height="50px" src="images/loader.svg">
+  </form>
+
+
+{% endblock %}
+
+{% block script %}
+  <script>
+
+    $("#submit-btn").on('click',function (e){
+      e.preventDefault();
+      $("#submit-btn").attr("disabled", true);
+      $("#loading").show();
+
+      $.ajax({
+        url: '/check_letter',
+        type: 'POST',
+        dataType: 'json',
+        data: {code: $("#ascii_code").val()} ,
+        success: function(data){
+          console.log(data);
+          $("#result").html(data.answer);
+          $("#result").show();
+          $("#loading").hide();
+          $("#submit-btn").attr("disabled", false);
+        },
+        error :function (data) {
+          console.log('error');
+
+          $("#submit-btn").attr("disabled", false);
+          $("#loading").hide();
+          $("#result").html("an error occured");
+          $("#result").show();
+
+        }
+      });
+
+
+    });
+
+
+  </script>
+
+{% endblock %}
